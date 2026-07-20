@@ -1,33 +1,77 @@
-# Novo Roadmap de Desenvolvimento
+# Roadmap de Desenvolvimento
+## Sistema de Gestão Inteligente de Notas Fiscais
 
-## Objetivo
-
-Construir o Sistema de Gestão Inteligente de Notas Fiscais utilizando uma arquitetura Serverless baseada em microsserviços por domínio e Lambdas especializadas.
-
-Cada operação do sistema será executada por uma Lambda independente, garantindo baixo acoplamento, maior escalabilidade e facilidade de manutenção.
+> Documento Técnico
+> Versão: 2.0
+> Status: Planejamento
 
 ---
 
-# Padrão Arquitetural
+# Objetivo
 
-Cada domínio possuirá um repositório próprio.
+Construir o Sistema de Gestão Inteligente de Notas Fiscais utilizando uma arquitetura Serverless baseada em AWS Lambda, API Gateway, Amazon S3 e Amazon DynamoDB.
 
-Dentro de cada repositório existirão diversas funções Lambda, onde cada função será responsável por apenas uma ação.
+Cada domínio da aplicação possuirá seu próprio repositório e cada operação será implementada em uma Lambda independente, permitindo baixo acoplamento, alta escalabilidade e facilidade de manutenção.
 
-Exemplo:
+---
+
+# Arquitetura dos Repositórios
 
 ```
-nf-notes
+GitHub
 
-├── invoice-create
-├── invoice-update
-├── invoice-delete
-├── invoice-get
-├── invoice-list
-└── invoice-download-xml
+├── ralplast-nf-xml
+├── ralplast-nf-notes
+├── ralplast-nf-dashboard
+├── ralplast-nf-financial
+├── ralplast-nf-reports
+├── ralplast-nf-companies
+├── ralplast-nf-users
+├── ralplast-nf-auth
+├── ralplast-nf-audit
+├── ralplast-nf-stock
+├── ralplast-nf-ai
+└── ralplast-nf-web
 ```
 
-Nenhuma Lambda possuirá múltiplas responsabilidades.
+Todos os repositórios backend possuirão um único workflow de deploy responsável por publicar todas as Lambdas do domínio.
+
+---
+
+# Ordem Recomendada de Desenvolvimento
+
+| Ordem | Repositório | Objetivo |
+|--------|-------------|----------|
+| 1 | **ralplast-nf-xml** | Receber, validar e interpretar XML |
+| 2 | **ralplast-nf-notes** | Persistência e consulta das notas fiscais |
+| 3 | **ralplast-nf-web** | Interface Web consumindo APIs prontas |
+| 4 | **ralplast-nf-dashboard** | Indicadores e gráficos |
+| 5 | **ralplast-nf-financial** | Cálculo de lucro e indicadores financeiros |
+| 6 | **ralplast-nf-reports** | Exportação PDF, Excel e CSV |
+| 7 | **ralplast-nf-companies** | Gestão de empresas |
+| 8 | **ralplast-nf-users** | Gestão de usuários |
+| 9 | **ralplast-nf-auth** | Login e autenticação |
+| 10 | **ralplast-nf-audit** | Auditoria |
+| 11 | **ralplast-nf-stock** | Controle de estoque |
+| 12 | **ralplast-nf-ai** | Inteligência Artificial |
+
+---
+
+# Sprint 0 — Infraestrutura
+
+## Objetivo
+
+Preparar toda a infraestrutura do projeto.
+
+### Atividades
+
+- Criar conta AWS
+- Criar IAM
+- Criar Bucket S3
+- Criar API Gateway
+- Criar DynamoDB
+- Configurar GitHub Actions
+- Estrutura inicial Python
 
 ---
 
@@ -36,27 +80,24 @@ Nenhuma Lambda possuirá múltiplas responsabilidades.
 ## Repositório
 
 ```
-nf-xml
+ralplast-nf-xml
 ```
-
-## Objetivo
-
-Receber arquivos XML e armazenar o documento original.
 
 ### Lambdas
 
 ```
-xml-upload
+ralplast-xml-upload
 ```
 
-Responsável por:
+### Objetivos
 
-- Receber Upload
-- Validar arquivo
+- Upload de XML
+- Upload múltiplo
+- Validar extensão
 - Salvar XML no Amazon S3
-- Registrar a importação
+- Registrar importação
 
-### Endpoint
+Endpoint
 
 ```
 POST /xml/upload
@@ -69,364 +110,184 @@ POST /xml/upload
 ## Repositório
 
 ```
-nf-xml
+ralplast-nf-xml
 ```
-
-## Objetivo
-
-Interpretar completamente o XML da NF-e.
 
 ### Lambdas
 
 ```
-xml-parser
+ralplast-xml-parser
+
+ralplast-xml-validator
 ```
 
-Responsável por:
+### Objetivos
 
 - Ler XML
-- Extrair dados
-- Identificar produtos
-- Identificar impostos
-- Identificar emitente
-- Identificar destinatário
-- Montar objeto da Nota Fiscal
-
----
-
-```
-xml-validator
-```
-
-Responsável por:
-
-- Validar estrutura
-- Verificar duplicidade
-- Validar chave de acesso
-
----
-
-# Sprint 3 — Persistência das Notas
-
-## Repositório
-
-```
-nf-notes
-```
-
-## Objetivo
-
-Persistir todas as informações da nota fiscal.
-
-### Lambdas
-
-```
-invoice-create
-```
-
-Responsável por:
-
-- Inserir Nota Fiscal
-
----
-
-```
-invoice-product-create
-```
-
-Responsável por:
-
-- Inserir Produtos
-
----
-
-```
-invoice-tax-create
-```
-
-Responsável por:
-
-- Inserir Impostos
-
----
-
-```
-invoice-duplicate-check
-```
-
-Responsável por:
-
+- Extrair todos os campos
+- Validar XML
+- Validar chave
 - Validar duplicidade
+- Gerar objeto de domínio
 
 ---
 
-# Sprint 4 — Consulta de Notas
+# Sprint 3 — Persistência
 
 ## Repositório
 
 ```
-nf-notes
+ralplast-nf-notes
 ```
 
 ### Lambdas
 
 ```
-invoice-get
+ralplast-invoice-create
+
+ralplast-invoice-product-create
+
+ralplast-invoice-tax-create
+
+ralplast-invoice-duplicate-check
 ```
 
-Consultar uma nota.
+### Objetivos
+
+Persistir:
+
+- Nota Fiscal
+- Produtos
+- Impostos
 
 ---
 
-```
-invoice-list
-```
-
-Listar notas.
-
----
-
-```
-invoice-search
-```
-
-Pesquisar notas.
-
----
-
-```
-invoice-download-xml
-```
-
-Download do XML original.
-
----
-
-# Sprint 5 — Dashboard
+# Sprint 4 — Consulta
 
 ## Repositório
 
 ```
-nf-dashboard
+ralplast-nf-notes
 ```
 
 ### Lambdas
 
 ```
-dashboard-cards
-```
+ralplast-invoice-get
 
-Cards principais.
+ralplast-invoice-list
+
+ralplast-invoice-search
+
+ralplast-invoice-download-xml
+```
 
 ---
 
-```
-dashboard-charts
-```
-
-Gráficos.
-
----
-
-```
-dashboard-summary
-```
-
-Indicadores gerais.
-
----
-
-# Sprint 6 — Financeiro
+# Sprint 5 — Frontend
 
 ## Repositório
 
 ```
-nf-financial
+ralplast-nf-web
+```
+
+### Objetivos
+
+Construir toda a interface consumindo APIs já prontas.
+
+### Funcionalidades
+
+- Layout
+- Login (temporariamente mockado)
+- Upload XML
+- Consulta de Notas
+- Visualização da Nota
+- Download XML
+
+Ao iniciar o frontend, todas as APIs de upload, processamento e consulta já estarão disponíveis, permitindo desenvolver a interface sem criar APIs simultaneamente.
+
+---
+
+# Sprint 6 — Dashboard
+
+## Repositório
+
+```
+ralplast-nf-dashboard
 ```
 
 ### Lambdas
 
 ```
-financial-profit
-```
+ralplast-dashboard-summary
 
-Calcular lucro.
+ralplast-dashboard-cards
+
+ralplast-dashboard-charts
+```
 
 ---
 
-```
-financial-revenue
-```
-
-Receita.
-
----
-
-```
-financial-expenses
-```
-
-Custos.
-
----
-
-```
-financial-summary
-```
-
-Resumo financeiro.
-
----
-
-# Sprint 7 — Relatórios
+# Sprint 7 — Financeiro
 
 ## Repositório
 
 ```
-nf-reports
+ralplast-nf-financial
 ```
 
 ### Lambdas
 
 ```
-report-pdf
+ralplast-financial-profit
+
+ralplast-financial-revenue
+
+ralplast-financial-expenses
+
+ralplast-financial-summary
 ```
 
 ---
 
-```
-report-excel
-```
-
----
-
-```
-report-csv
-```
-
----
-
-# Sprint 8 — Empresas
+# Sprint 8 — Relatórios
 
 ## Repositório
 
 ```
-nf-companies
-```
-
-### Lambdas
-
-```
-company-create
-company-update
-company-delete
-company-get
-company-list
+ralplast-nf-reports
 ```
 
 ---
 
-# Sprint 9 — Usuários
+# Sprint 9 — Empresas
 
 ## Repositório
 
 ```
-nf-users
-```
-
-### Lambdas
-
-```
-user-create
-user-update
-user-delete
-user-get
-user-list
+ralplast-nf-companies
 ```
 
 ---
 
-# Sprint 10 — Autenticação
+# Sprint 10 — Usuários
 
 ## Repositório
 
 ```
-nf-auth
+ralplast-nf-users
 ```
-
-### Lambdas
-
-```
-auth-login
-```
-
-Login.
 
 ---
 
-```
-auth-refresh
-```
-
-Refresh Token.
-
----
-
-```
-auth-forgot-password
-```
-
-Recuperação de senha.
-
----
-
-```
-auth-reset-password
-```
-
-Nova senha.
-
----
-
-```
-auth-me
-```
-
-Usuário autenticado.
-
----
-
-# Sprint 11 — Controle de Acesso
+# Sprint 11 — Autenticação
 
 ## Repositório
 
 ```
-nf-auth
+ralplast-nf-auth
 ```
-
-### Lambdas
-
-```
-permission-check
-```
-
-Validação de permissões.
-
----
-
-```
-role-list
-```
-
-Listagem de perfis.
-
----
-
-```
-role-update
-```
-
-Atualização de permissões.
 
 ---
 
@@ -435,32 +296,8 @@ Atualização de permissões.
 ## Repositório
 
 ```
-nf-audit
+ralplast-nf-audit
 ```
-
-### Lambdas
-
-```
-audit-create
-```
-
-Registrar eventos.
-
----
-
-```
-audit-get
-```
-
-Consultar auditoria.
-
----
-
-```
-audit-list
-```
-
-Listar auditorias.
 
 ---
 
@@ -469,16 +306,7 @@ Listar auditorias.
 ## Repositório
 
 ```
-nf-stock
-```
-
-### Lambdas
-
-```
-stock-entry
-stock-output
-stock-balance
-stock-history
+ralplast-nf-stock
 ```
 
 ---
@@ -488,43 +316,85 @@ stock-history
 ## Repositório
 
 ```
-nf-ai
-```
-
-### Lambdas
-
-```
-ai-insights
+ralplast-nf-ai
 ```
 
 ---
 
+# Fluxo de Desenvolvimento
+
 ```
-ai-forecast
+Infraestrutura
+
+↓
+
+Upload XML
+
+↓
+
+Parser da NF-e
+
+↓
+
+Persistência
+
+↓
+
+Consulta
+
+↓
+
+Frontend
+
+↓
+
+Dashboard
+
+↓
+
+Financeiro
+
+↓
+
+Relatórios
+
+↓
+
+Empresas
+
+↓
+
+Usuários
+
+↓
+
+Autenticação
+
+↓
+
+Auditoria
+
+↓
+
+Estoque
+
+↓
+
+Inteligência Artificial
 ```
 
 ---
 
-```
-ai-duplicate-analysis
-```
+# Justificativa
 
----
+O frontend será iniciado somente após as APIs principais estarem concluídas.
 
-```
-ai-financial-analysis
-```
+Com isso será possível:
 
----
+- Consumir APIs reais desde o primeiro dia.
+- Evitar retrabalho causado por mudanças de contrato.
+- Desenvolver a interface utilizando dados reais.
+- Validar o backend com Postman antes da criação das telas.
+- Reduzir a complexidade do desenvolvimento paralelo.
 
-# Benefícios da Arquitetura
-
-- Uma única responsabilidade por Lambda (SRP)
-- Deploy independente por operação
-- Escalabilidade individual
-- Menor acoplamento entre funcionalidades
-- Logs isolados no CloudWatch
-- Permissões IAM específicas por função
-- Facilidade para testes unitários e integração
-- Evolução independente de cada domínio
-- Arquitetura preparada para crescimento do sistema
+Essa abordagem acelera o desenvolvimento, melhora a qualidade das integrações e reduz o esforço de manutenção ao longo do projeto.
