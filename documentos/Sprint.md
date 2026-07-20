@@ -1,287 +1,530 @@
-
 # Novo Roadmap de Desenvolvimento
 
 ## Objetivo
 
-Priorizar a implementação do núcleo funcional do Sistema de Gestão Inteligente de Notas Fiscais, permitindo que o processamento de XML esteja operacional o mais rápido possível.
+Construir o Sistema de Gestão Inteligente de Notas Fiscais utilizando uma arquitetura Serverless baseada em microsserviços por domínio e Lambdas especializadas.
 
-A camada de autenticação será implementada posteriormente, antes da disponibilização do sistema para usuários finais.
+Cada operação do sistema será executada por uma Lambda independente, garantindo baixo acoplamento, maior escalabilidade e facilidade de manutenção.
+
+---
+
+# Padrão Arquitetural
+
+Cada domínio possuirá um repositório próprio.
+
+Dentro de cada repositório existirão diversas funções Lambda, onde cada função será responsável por apenas uma ação.
+
+Exemplo:
+
+```
+nf-notes
+
+├── invoice-create
+├── invoice-update
+├── invoice-delete
+├── invoice-get
+├── invoice-list
+└── invoice-download-xml
+```
+
+Nenhuma Lambda possuirá múltiplas responsabilidades.
 
 ---
 
 # Sprint 1 — Upload de XML
 
-## Backend
-
-Repositório
+## Repositório
 
 ```
 nf-xml
 ```
 
-## Objetivos
+## Objetivo
 
-- Estrutura inicial do projeto
-- Configuração da Lambda
-- API Gateway
-- Bucket S3
-- Upload de XML
-- Armazenamento do XML Original
-- Registro inicial da importação
+Receber arquivos XML e armazenar o documento original.
 
-## Entregas
+### Lambdas
 
-- POST /xml/upload
-- Upload múltiplo
-- Upload individual
-- Upload para Amazon S3
-- Registro da importação
+```
+xml-upload
+```
+
+Responsável por:
+
+- Receber Upload
+- Validar arquivo
+- Salvar XML no Amazon S3
+- Registrar a importação
+
+### Endpoint
+
+```
+POST /xml/upload
+```
 
 ---
 
-# Sprint 2 — Processamento do XML
+# Sprint 2 — Processamento da NF-e
 
-Repositório
+## Repositório
 
 ```
 nf-xml
 ```
 
-## Objetivos
+## Objetivo
 
-Implementar toda leitura da NF-e.
+Interpretar completamente o XML da NF-e.
 
-## Funcionalidades
+### Lambdas
 
-- Parser XML
-- Leitura completa da NF-e
-- Emitente
-- Destinatário
-- Produtos
-- Impostos
-- Totais
-- Chave de acesso
-- Número
-- Série
+```
+xml-parser
+```
 
-## Resultado
+Responsável por:
 
-Transformar XML em objetos de domínio.
+- Ler XML
+- Extrair dados
+- Identificar produtos
+- Identificar impostos
+- Identificar emitente
+- Identificar destinatário
+- Montar objeto da Nota Fiscal
 
 ---
 
-# Sprint 3 — Persistência
+```
+xml-validator
+```
 
-Repositório
+Responsável por:
+
+- Validar estrutura
+- Verificar duplicidade
+- Validar chave de acesso
+
+---
+
+# Sprint 3 — Persistência das Notas
+
+## Repositório
 
 ```
 nf-notes
 ```
 
-## Objetivos
+## Objetivo
 
-Persistir todas as informações da NF-e.
+Persistir todas as informações da nota fiscal.
 
-## Funcionalidades
+### Lambdas
 
-- Cadastro da Nota
-- Cadastro dos Produtos
-- Identificação Entrada/Saída
-- Evitar duplicidade
-- Histórico
+```
+invoice-create
+```
+
+Responsável por:
+
+- Inserir Nota Fiscal
+
+---
+
+```
+invoice-product-create
+```
+
+Responsável por:
+
+- Inserir Produtos
+
+---
+
+```
+invoice-tax-create
+```
+
+Responsável por:
+
+- Inserir Impostos
+
+---
+
+```
+invoice-duplicate-check
+```
+
+Responsável por:
+
+- Validar duplicidade
 
 ---
 
 # Sprint 4 — Consulta de Notas
 
-Repositório
+## Repositório
 
 ```
 nf-notes
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Consulta
-- Pesquisa
-- Paginação
-- Filtros
-- Visualização da Nota
-- Download do XML
+```
+invoice-get
+```
+
+Consultar uma nota.
+
+---
+
+```
+invoice-list
+```
+
+Listar notas.
+
+---
+
+```
+invoice-search
+```
+
+Pesquisar notas.
+
+---
+
+```
+invoice-download-xml
+```
+
+Download do XML original.
 
 ---
 
 # Sprint 5 — Dashboard
 
-Repositório
+## Repositório
 
 ```
 nf-dashboard
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Cards
-- Indicadores
-- Evolução Mensal
-- Quantidade de Notas
-- Entradas
-- Saídas
+```
+dashboard-cards
+```
+
+Cards principais.
+
+---
+
+```
+dashboard-charts
+```
+
+Gráficos.
+
+---
+
+```
+dashboard-summary
+```
+
+Indicadores gerais.
 
 ---
 
 # Sprint 6 — Financeiro
 
-Repositório
+## Repositório
 
 ```
 nf-financial
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Lucro
-- Receita
-- Custos
-- Indicadores Financeiros
-- Faturamento
+```
+financial-profit
+```
+
+Calcular lucro.
+
+---
+
+```
+financial-revenue
+```
+
+Receita.
+
+---
+
+```
+financial-expenses
+```
+
+Custos.
+
+---
+
+```
+financial-summary
+```
+
+Resumo financeiro.
 
 ---
 
 # Sprint 7 — Relatórios
 
-Repositório
+## Repositório
 
 ```
 nf-reports
 ```
 
-## Funcionalidades
+### Lambdas
 
-- PDF
-- Excel
-- CSV
-- Relatórios Financeiros
-- Relatórios Fiscais
+```
+report-pdf
+```
 
 ---
 
-# Sprint 8 — Gestão de Empresas
+```
+report-excel
+```
 
-Repositório
+---
+
+```
+report-csv
+```
+
+---
+
+# Sprint 8 — Empresas
+
+## Repositório
 
 ```
 nf-companies
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Cadastro de Empresas
-- Filiais
-- Configurações
+```
+company-create
+company-update
+company-delete
+company-get
+company-list
+```
 
 ---
 
-# Sprint 9 — Gestão de Usuários
+# Sprint 9 — Usuários
 
-Repositório
+## Repositório
 
 ```
 nf-users
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Cadastro
-- Alteração
-- Exclusão
-- Perfis
+```
+user-create
+user-update
+user-delete
+user-get
+user-list
+```
 
 ---
 
 # Sprint 10 — Autenticação
 
-Repositório
+## Repositório
 
 ```
 nf-auth
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Login
-- JWT
-- Refresh Token
-- Recuperação de Senha
-- Alteração de Senha
-- Endpoint /auth/me
-- Controle de Sessão
+```
+auth-login
+```
+
+Login.
 
 ---
 
-# Sprint 11 — Controle de Acesso (RBAC)
+```
+auth-refresh
+```
 
-Repositório
+Refresh Token.
+
+---
+
+```
+auth-forgot-password
+```
+
+Recuperação de senha.
+
+---
+
+```
+auth-reset-password
+```
+
+Nova senha.
+
+---
+
+```
+auth-me
+```
+
+Usuário autenticado.
+
+---
+
+# Sprint 11 — Controle de Acesso
+
+## Repositório
 
 ```
 nf-auth
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Perfis
-- Permissões
-- Middleware de autorização
-- Proteção das APIs
+```
+permission-check
+```
+
+Validação de permissões.
+
+---
+
+```
+role-list
+```
+
+Listagem de perfis.
+
+---
+
+```
+role-update
+```
+
+Atualização de permissões.
 
 ---
 
 # Sprint 12 — Auditoria
 
-Repositório
+## Repositório
 
 ```
 nf-audit
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Logs de Login
-- Logs de Upload
-- Logs de Alterações
-- Histórico de Operações
-- Rastreabilidade
+```
+audit-create
+```
+
+Registrar eventos.
+
+---
+
+```
+audit-get
+```
+
+Consultar auditoria.
+
+---
+
+```
+audit-list
+```
+
+Listar auditorias.
 
 ---
 
 # Sprint 13 — Estoque
 
-Repositório
+## Repositório
 
 ```
 nf-stock
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Entrada
-- Saída
-- Movimentações
-- Saldo
+```
+stock-entry
+stock-output
+stock-balance
+stock-history
+```
 
 ---
 
 # Sprint 14 — Inteligência Artificial
 
-Repositório
+## Repositório
 
 ```
 nf-ai
 ```
 
-## Funcionalidades
+### Lambdas
 
-- Detecção de XML duplicado
-- Previsão de faturamento
-- Insights financeiros
-- Sugestões de compras
+```
+ai-insights
+```
+
+---
+
+```
+ai-forecast
+```
+
+---
+
+```
+ai-duplicate-analysis
+```
+
+---
+
+```
+ai-financial-analysis
+```
+
+---
+
+# Benefícios da Arquitetura
+
+- Uma única responsabilidade por Lambda (SRP)
+- Deploy independente por operação
+- Escalabilidade individual
+- Menor acoplamento entre funcionalidades
+- Logs isolados no CloudWatch
+- Permissões IAM específicas por função
+- Facilidade para testes unitários e integração
+- Evolução independente de cada domínio
+- Arquitetura preparada para crescimento do sistema
