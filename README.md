@@ -1,8 +1,28 @@
 # Sistema de Gestão Inteligente de Notas Fiscais
 
 > Documento Funcional  
-> Versão: 1.0  
-> Status: Em Planejamento
+> **Versão:** 1.0  
+> **Status:** Em Planejamento
+
+---
+
+# Sumário
+
+1. Visão Geral
+2. Objetivos
+3. Arquitetura
+4. Fluxo do Sistema
+5. Funcionalidades
+6. Autenticação e Controle de Acesso
+7. Cálculo Automático de Lucro
+8. Estrutura do Banco de Dados
+9. Dashboard
+10. Casos de Uso
+11. Benefícios
+12. Expansões Futuras
+13. Tecnologias Sugeridas
+14. Roadmap do Projeto
+15. Conclusão
 
 ---
 
@@ -12,7 +32,7 @@ O Sistema de Gestão Inteligente de Notas Fiscais foi desenvolvido para automati
 
 Seu principal objetivo é centralizar todas as notas fiscais em uma única base de dados, permitindo consultas rápidas, cálculo de lucro, indicadores financeiros e preparação para futuras integrações com ERP, sistemas fiscais e plataformas de Business Intelligence.
 
-O sistema elimina controles manuais em planilhas e fornece uma visão completa das movimentações de entrada e saída da empresa.
+O sistema elimina controles manuais em planilhas e fornece uma visão completa das movimentações fiscais da empresa.
 
 ---
 
@@ -24,6 +44,8 @@ O sistema elimina controles manuais em planilhas e fornece uma visão completa d
 - Calcular lucro automaticamente.
 - Preparar a empresa para análises gerenciais.
 - Possibilitar futuras integrações com ERP.
+- Garantir segurança das informações fiscais.
+- Disponibilizar indicadores em tempo real.
 
 ---
 
@@ -65,9 +87,9 @@ Dashboard
 
 # 4. Fluxo do Sistema
 
-## Passo 1
+## Passo 1 — Upload do XML
 
-O usuário realiza o upload do XML.
+O usuário realiza o envio de um ou mais arquivos XML.
 
 ```
 Selecionar XML
@@ -79,14 +101,15 @@ Enviar
 
 ---
 
-## Passo 2
+## Passo 2 — Validação
 
-O sistema valida:
+O sistema verifica automaticamente:
 
 - XML válido
 - Modelo da NF-e
 - Duplicidade
 - Integridade
+- Chave de acesso
 
 Caso exista erro:
 
@@ -100,9 +123,9 @@ Mensagem ao usuário
 
 ---
 
-## Passo 3
+## Passo 3 — Leitura
 
-O XML é interpretado.
+Após validação, o XML é interpretado.
 
 Exemplo:
 
@@ -128,7 +151,7 @@ Tipo
 
 ---
 
-## Passo 4
+## Passo 4 — Classificação
 
 O sistema identifica automaticamente:
 
@@ -140,13 +163,13 @@ ou
 Saída
 ```
 
-Sem necessidade do usuário informar.
+Sem necessidade de intervenção do usuário.
 
 ---
 
-## Passo 5
+## Passo 5 — Armazenamento
 
-Todos os dados são gravados.
+Todos os dados são persistidos.
 
 ```
 Tabela Notas
@@ -170,33 +193,33 @@ XML Original
 
 ## Upload de XML
 
-Permite importar um ou vários arquivos XML.
+Permite importar arquivos XML individualmente ou em lote.
 
 ### Recursos
 
 - Upload individual
-- Upload em lote
+- Upload múltiplo
 - Drag & Drop
 - Barra de progresso
+- Reprocessamento
 
 ---
 
 ## Validação
 
-Antes de salvar, o sistema verifica:
+Antes do armazenamento, o sistema verifica:
 
 - XML válido
 - Duplicidade
 - Integridade
+- Estrutura da NF-e
 - Chave de acesso
 
 ---
 
 ## Armazenamento
 
-Todos os XMLs permanecem armazenados.
-
-Campos principais:
+Todos os XMLs permanecem armazenados para futuras consultas.
 
 | Campo | Descrição |
 |---------|------------|
@@ -217,7 +240,7 @@ Campos principais:
 
 Consulta completa das notas.
 
-Filtros:
+Filtros disponíveis:
 
 - Data
 - Mês
@@ -227,6 +250,7 @@ Filtros:
 - Fornecedor
 - Produto
 - Número da Nota
+- Valor
 
 ---
 
@@ -238,14 +262,13 @@ Pesquisa rápida por:
 - Produto
 - Cliente
 - Fornecedor
+- Número da Nota
 
 ---
 
 ## Dashboard
 
 Indicadores principais.
-
-Exemplo:
 
 ```
 Entradas
@@ -263,7 +286,254 @@ R$ 260.000
 
 ---
 
-# 6. Cálculo Automático de Lucro
+# 6. Autenticação e Controle de Acesso
+
+Para garantir a segurança das informações fiscais, o sistema contará com autenticação de usuários e controle de permissões baseado em perfis (**RBAC - Role Based Access Control**).
+
+Somente usuários autorizados poderão acessar as funcionalidades do sistema, respeitando as permissões definidas para cada perfil.
+
+---
+
+## Login
+
+O acesso ao sistema será realizado através de autenticação utilizando:
+
+- E-mail
+- Senha
+
+Fluxo de autenticação:
+
+```
+Usuário
+
+↓
+
+Tela de Login
+
+↓
+
+Validação
+
+↓
+
+Autenticação
+
+↓
+
+Dashboard
+```
+
+Após o login será gerado um Token JWT para acesso seguro às APIs do sistema.
+
+---
+
+## Recuperação de Senha
+
+O sistema permitirá recuperação de acesso através do e-mail cadastrado.
+
+Fluxo:
+
+```
+Esqueci minha senha
+
+↓
+
+Informar e-mail
+
+↓
+
+Receber link
+
+↓
+
+Nova senha
+
+↓
+
+Login
+```
+
+---
+
+## Perfis de Usuário
+
+### Administrador
+
+Possui acesso completo ao sistema.
+
+Permissões:
+
+- Cadastro de usuários
+- Cadastro de empresas
+- Cadastro de perfis
+- Upload de XML
+- Consulta de notas
+- Dashboard
+- Relatórios
+- Configurações
+- Exclusão de registros
+- Integrações
+
+---
+
+### Financeiro
+
+Responsável pela gestão financeira.
+
+Permissões:
+
+- Upload de XML
+- Consulta de notas
+- Dashboard Financeiro
+- Relatórios
+- Exportações
+
+Sem acesso às configurações administrativas.
+
+---
+
+### Fiscal
+
+Responsável pela conferência dos documentos fiscais.
+
+Permissões:
+
+- Upload de XML
+- Consulta de notas
+- Auditoria
+- Validação
+- Correção de inconsistências
+
+Sem acesso à administração do sistema.
+
+---
+
+### Estoque
+
+Responsável pelo controle de entrada e saída de mercadorias.
+
+Permissões:
+
+- Consulta de notas
+- Consulta de produtos
+- Movimentações
+- Histórico de estoque
+
+---
+
+### Gerência
+
+Visualização estratégica da empresa.
+
+Permissões:
+
+- Dashboard Executivo
+- Indicadores
+- Relatórios
+- Lucro
+- Faturamento
+- Exportações
+
+Sem permissão para alterar dados.
+
+---
+
+## Controle de Permissões
+
+| Funcionalidade | Administrador | Financeiro | Fiscal | Estoque | Gerência |
+|----------------|:-------------:|:----------:|:-------:|:--------:|:---------:|
+| Login | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Dashboard | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Upload XML | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Consultar Notas | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Cadastro de Usuários | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Cadastro de Empresas | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Configurações | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Relatórios | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Exportação | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Exclusão de Notas | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auditoria | ✅ | ❌ | ✅ | ❌ | ✅ |
+
+---
+
+## Segurança
+
+O sistema seguirá boas práticas de segurança da informação.
+
+### Recursos previstos
+
+- Login protegido por senha criptografada
+- Senhas armazenadas utilizando BCrypt
+- Autenticação por Token JWT
+- Expiração automática da sessão
+- Controle de permissões por perfil
+- Auditoria de operações
+- Comunicação criptografada via HTTPS
+- Bloqueio temporário após tentativas inválidas
+- Registro do último acesso
+- Política de senhas fortes
+- Proteção contra ataques de força bruta
+
+---
+
+## Auditoria
+
+Todas as operações relevantes serão registradas.
+
+Exemplos:
+
+- Login
+- Logout
+- Upload de XML
+- Alteração de cadastro
+- Exclusão de registros
+- Exportação de relatórios
+- Alteração de permissões
+- Recuperação de senha
+
+Cada registro conterá:
+
+- Usuário
+- Data e Hora
+- Endereço IP
+- Operação
+- Resultado
+
+---
+
+## Fluxo Geral de Autenticação
+
+```
+Usuário
+
+↓
+
+Tela de Login
+
+↓
+
+Validação das Credenciais
+
+↓
+
+Autenticação
+
+↓
+
+Validação do Perfil
+
+↓
+
+Liberação das Funcionalidades
+
+↓
+
+Utilização do Sistema
+```
+
+---
+
+# 7. Cálculo Automático de Lucro
 
 O sistema calcula automaticamente.
 
@@ -272,15 +542,16 @@ Lucro
 
 =
 
-Saídas
+Total de Saídas
 
 -
 
-Entradas
+Total de Entradas
 ```
 
 Também poderá calcular:
 
+- Lucro diário
 - Lucro mensal
 - Lucro anual
 - Lucro por produto
@@ -289,31 +560,21 @@ Também poderá calcular:
 
 ---
 
-# 7. Estrutura do Banco
+# 8. Estrutura do Banco de Dados
 
 ## Tabela Notas
 
 ```
 id
-
 tipo
-
 numero
-
 serie
-
 chave
-
 emitente
-
 destinatario
-
 valor_total
-
 data_emissao
-
 xml_original
-
 created_at
 ```
 
@@ -323,25 +584,58 @@ created_at
 
 ```
 id
-
 nota_id
-
 codigo
-
 descricao
-
 quantidade
-
 valor_unitario
-
 valor_total
 ```
 
 ---
 
-# 8. Dashboard
+## Usuários
 
-O sistema disponibiliza indicadores como:
+```
+id
+nome
+email
+senha_hash
+perfil_id
+ativo
+ultimo_login
+created_at
+updated_at
+```
+
+---
+
+## Perfis
+
+```
+id
+nome
+descricao
+```
+
+---
+
+## Auditoria
+
+```
+id
+usuario_id
+acao
+ip
+resultado
+created_at
+```
+
+---
+
+# 9. Dashboard
+
+Indicadores disponíveis:
 
 - Quantidade de notas
 - Valor comprado
@@ -351,18 +645,15 @@ O sistema disponibiliza indicadores como:
 - Clientes
 - Fornecedores
 - Lucro
+- Evolução mensal
+- Quantidade de XMLs processados
+- Últimos uploads
 
 ---
 
-# 9. Casos de Uso
+# 10. Casos de Uso
 
-## Caso de Uso 1 — Upload de XML
-
-### Situação
-
-O usuário recebe uma NF-e de fornecedor.
-
-### Fluxo
+## Caso 1 — Upload de XML
 
 ```
 Upload XML
@@ -386,17 +677,11 @@ Atualiza Dashboard
 
 Resultado:
 
-- Nota disponível para consulta.
+Nota disponível para consulta.
 
 ---
 
-## Caso de Uso 2 — Venda
-
-### Situação
-
-Empresa emitiu uma NF-e.
-
-### Fluxo
+## Caso 2 — Venda
 
 ```
 Upload XML
@@ -407,20 +692,18 @@ Sistema identifica Saída
 
 ↓
 
-Atualiza histórico
+Atualiza Histórico
 
 ↓
 
-Atualiza indicadores
+Atualiza Indicadores
 ```
 
 ---
 
-## Caso de Uso 3 — Consulta
+## Caso 3 — Consulta
 
-O usuário deseja localizar uma nota.
-
-Pesquisa:
+Pesquisa por:
 
 ```
 Número
@@ -438,11 +721,7 @@ Resultado imediato.
 
 ---
 
-## Caso de Uso 4 — Cálculo de Lucro
-
-Empresa deseja saber o lucro do mês.
-
-Sistema calcula automaticamente.
+## Caso 4 — Cálculo de Lucro
 
 ```
 Entradas
@@ -460,18 +739,14 @@ R$ 120.000
 
 ---
 
-## Caso de Uso 5 — Auditoria
-
-Auditor solicita todas as notas de um fornecedor.
-
-Filtro:
+## Caso 5 — Auditoria
 
 ```
 Fornecedor
 
 ↓
 
-Data
+Período
 
 ↓
 
@@ -480,64 +755,57 @@ Resultado
 
 ---
 
-## Caso de Uso 6 — Produto
+## Caso 6 — Produto
 
-Usuário deseja descobrir:
+Consulta:
 
-"Quanto já comprei deste produto?"
+> Quanto já comprei deste produto?
 
-Sistema retorna:
+Resposta:
 
-```
-Quantidade
-
-Valor
-
-Notas
-
-Datas
-```
+- Quantidade
+- Valor
+- Notas
+- Datas
 
 ---
 
-## Caso de Uso 7 — Cliente
+## Caso 7 — Cliente
 
-Usuário deseja visualizar tudo que vendeu para um cliente.
+Consulta:
 
-Sistema retorna:
+> Tudo que foi vendido para determinado cliente.
 
-```
-Todas as notas
+Retorno:
 
-Valor vendido
-
-Produtos
-
-Período
-```
+- Notas
+- Produtos
+- Valor Total
+- Período
 
 ---
 
-# 10. Benefícios
+# 11. Benefícios
 
 - Elimina controles em planilhas
 - Organização centralizada
 - Histórico completo
 - Busca rápida
 - Segurança dos XMLs
+- Controle de acesso por perfis
+- Auditoria completa
 - Redução de erros
 - Informações em tempo real
 - Base preparada para BI
+- Arquitetura escalável
 
 ---
 
-# 11. Expansões Futuras
+# 12. Expansões Futuras
 
 ## ERP
 
-Integração automática.
-
-Exemplos:
+Integrações com:
 
 - Sankhya
 - Totvs
@@ -553,27 +821,29 @@ Consulta automática de NF-e.
 
 ---
 
-## Emissão
+## Emissão de NF-e
 
-Emissão automática de notas.
+Geração automática de documentos fiscais.
 
 ---
 
 ## Controle de Estoque
 
-Entrada da nota.
+```
+Entrada da Nota
 
 ↓
 
-Atualiza estoque.
+Atualiza Estoque
 
 ↓
 
-Venda.
+Venda
 
 ↓
 
-Baixa automática.
+Baixa Automática
+```
 
 ---
 
@@ -584,6 +854,7 @@ Integração com:
 - Contas a pagar
 - Contas a receber
 - Fluxo de caixa
+- Conciliação bancária
 
 ---
 
@@ -597,54 +868,75 @@ Indicadores avançados:
 - Evolução do faturamento
 - Evolução do lucro
 - Compras por fornecedor
+- Performance de clientes
 
 ---
 
 ## Inteligência Artificial
 
-No futuro será possível utilizar IA para:
+Possibilidades futuras:
 
-- Detectar notas duplicadas
-- Encontrar inconsistências fiscais
-- Prever faturamento
-- Identificar oportunidades de economia
-- Gerar insights financeiros automaticamente
+- Detecção de notas duplicadas
+- Identificação de inconsistências fiscais
+- Previsão de faturamento
+- Sugestão de compras
+- Identificação de oportunidades de economia
+- Geração automática de insights financeiros
 
 ---
 
-# 12. Tecnologias Sugeridas
+# 13. Tecnologias Sugeridas
 
 ## Frontend
 
 - Angular
 - Tailwind CSS
 
+---
+
 ## Backend
 
 - Python
 - FastAPI
 
+---
+
 ## Banco de Dados
 
 - PostgreSQL
 
+---
+
 ## Armazenamento
 
 - Amazon S3
+
+---
 
 ## Infraestrutura
 
 - AWS
 - Docker
 - GitHub Actions
+- Nginx
 
 ---
 
-# 13. Roadmap do Projeto
+## Segurança
+
+- JWT
+- BCrypt
+- HTTPS
+- RBAC
+
+---
+
+# 14. Roadmap do Projeto
 
 ## Fase 1
 
-- Cadastro
+- Cadastro de usuários
+- Login
 - Upload XML
 - Armazenamento
 - Histórico
@@ -654,25 +946,28 @@ No futuro será possível utilizar IA para:
 ## Fase 2
 
 - Dashboard
-- Filtros
 - Pesquisa
+- Filtros
 - Relatórios
+- Controle de acesso
 
 ---
 
 ## Fase 3
 
-- Cálculo de Lucro
 - Indicadores
+- Cálculo de lucro
 - Exportações
+- Auditoria
 
 ---
 
 ## Fase 4
 
-- Integrações ERP
+- ERP
 - Estoque
 - Financeiro
+- APIs
 
 ---
 
@@ -680,13 +975,15 @@ No futuro será possível utilizar IA para:
 
 - BI
 - Inteligência Artificial
-- Previsões
 - Analytics
+- Dashboards Avançados
 
 ---
 
-# Conclusão
+# 15. Conclusão
 
-O Sistema de Gestão Inteligente de Notas Fiscais foi concebido para centralizar o processamento de documentos fiscais, oferecendo uma solução moderna, escalável e preparada para o crescimento da empresa.
+O Sistema de Gestão Inteligente de Notas Fiscais foi concebido para centralizar o processamento de documentos fiscais eletrônicos, oferecendo uma plataforma moderna, segura, escalável e preparada para o crescimento da empresa.
 
-Além de automatizar tarefas operacionais, a plataforma fornece informações estratégicas para tomada de decisão, permitindo maior controle financeiro, redução de erros e aumento da produtividade.
+Além de automatizar tarefas operacionais, o sistema fornece informações estratégicas para tomada de decisão, garantindo maior controle financeiro, rastreabilidade das operações, segurança dos dados e conformidade com boas práticas de desenvolvimento.
+
+Sua arquitetura modular permite evolução contínua, possibilitando futuras integrações com ERPs, plataformas financeiras, sistemas de estoque, soluções de Business Intelligence e recursos de Inteligência Artificial, tornando-se uma solução completa para gestão fiscal e financeira.
