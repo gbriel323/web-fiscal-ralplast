@@ -3,7 +3,7 @@
 
 > Documento Técnico
 > Versão: 2.0
-> Status: Planejamento
+> Status: Em andamento - Sprint 0 — Infraestrutura
 
 ---
 
@@ -40,7 +40,7 @@ Todos os repositórios backend possuirão um único workflow de deploy responsá
 
 # Ordem Recomendada de Desenvolvimento
 
-| Ordem | Repositório | Objetivo |
+| Ordem | Repositório | Objetivo | 
 |--------|-------------|----------|
 | 1 | **ralplast-nf-xml** | Receber, validar e interpretar XML |
 | 2 | **ralplast-nf-notes** | Persistência e consulta das notas fiscais |
