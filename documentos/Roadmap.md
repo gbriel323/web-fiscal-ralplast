@@ -1,21 +1,20 @@
+
 # Roadmap de Desenvolvimento
 ## Sistema de Gestão Inteligente de Notas Fiscais
 
-> Documento Técnico  
-> Versão: 2.0  
-> Status: Em andamento: Sprint 0 — Infraestrutura
+> **Documento Técnico**  
+> **Versão:** 2.0  
+> **Status:** Em andamento: Sprint 0 — Infraestrutura
 
 ---
 
-# Objetivo
+## Objetivo
 
-Construir o Sistema de Gestão Inteligente de Notas Fiscais utilizando uma arquitetura Serverless baseada em AWS Lambda, API Gateway, Amazon S3 e Amazon DynamoDB.
-
-Cada domínio da aplicação possuirá seu próprio repositório e cada operação será implementada em uma Lambda independente, permitindo baixo acoplamento, alta escalabilidade e facilidade de manutenção.
+Construir um **Sistema de Gestão Inteligente de Notas Fiscais** utilizando uma arquitetura **Serverless** baseada em AWS, permitindo baixo acoplamento, alta escalabilidade e facilidade de manutenção.
 
 ---
 
-# Arquitetura dos Repositórios
+## Arquitetura dos Repositórios
 
 ```
 GitHub
@@ -34,32 +33,30 @@ GitHub
 └── ralplast-nf-web
 ```
 
-Todos os repositórios backend possuirão um único workflow de deploy responsável por publicar todas as Lambdas do domínio.
+---
+
+## Ordem Recomendada de Desenvolvimento
+
+| Ordem | Repositório            | Objetivo                                                | 
+|-------|------------------------|--------------------------------------------------------|
+| 1     | **ralplast-nf-xml**    | Receber, validar e interpretar XML                     |
+| 2     | **ralplast-nf-notes**  | Persistência e consulta das notas fiscais              |
+| 3     | **ralplast-nf-web**    | Interface Web consumindo APIs                           |
+| 4     | **ralplast-nf-dashboard**| Indicadores e gráficos                                 |
+| 5     | **ralplast-nf-financial**| Cálculo de lucro e indicadores financeiros             |
+| 6     | **ralplast-nf-reports** | Exportação PDF, Excel e CSV                            |
+| 7     | **ralplast-nf-companies**| Gestão de empresas                                     |
+| 8     | **ralplast-nf-users**   | Gestão de usuários                                     |
+| 9     | **ralplast-nf-auth**    | Login e autenticação                                   |
+| 10    | **ralplast-nf-audit**   | Auditoria                                             |
+| 11    | **ralplast-nf-stock**   | Controle de estoque                                    |
+| 12    | **ralplast-nf-ai**      | Inteligência Artificial                                |
 
 ---
 
-# Ordem Recomendada de Desenvolvimento
+## Sprint 0 — Infraestrutura
 
-| Ordem | Repositório | Objetivo | 
-|--------|-------------|----------|
-| 1 | **ralplast-nf-xml** | Receber, validar e interpretar XML |
-| 2 | **ralplast-nf-notes** | Persistência e consulta das notas fiscais |
-| 3 | **ralplast-nf-web** | Interface Web consumindo APIs prontas |
-| 4 | **ralplast-nf-dashboard** | Indicadores e gráficos |
-| 5 | **ralplast-nf-financial** | Cálculo de lucro e indicadores financeiros |
-| 6 | **ralplast-nf-reports** | Exportação PDF, Excel e CSV |
-| 7 | **ralplast-nf-companies** | Gestão de empresas |
-| 8 | **ralplast-nf-users** | Gestão de usuários |
-| 9 | **ralplast-nf-auth** | Login e autenticação |
-| 10 | **ralplast-nf-audit** | Auditoria |
-| 11 | **ralplast-nf-stock** | Controle de estoque |
-| 12 | **ralplast-nf-ai** | Inteligência Artificial |
-
----
-
-# Sprint 0 — Infraestrutura
-
-## Objetivo
+### Objetivo
 
 Preparar toda a infraestrutura do projeto.
 
@@ -75,9 +72,9 @@ Preparar toda a infraestrutura do projeto.
 
 ---
 
-# Sprint 1 — Upload de XML
+## Sprint 1 — Upload de XML
 
-## Repositório
+### Repositório
 
 ```
 ralplast-nf-xml
@@ -97,7 +94,7 @@ ralplast-xml-upload
 - Salvar XML no Amazon S3
 - Registrar importação
 
-Endpoint
+**Endpoint:**
 
 ```
 POST /xml/upload
@@ -105,9 +102,9 @@ POST /xml/upload
 
 ---
 
-# Sprint 2 — Processamento da NF-e
+## Sprint 2 — Processamento da NF-e
 
-## Repositório
+### Repositório
 
 ```
 ralplast-nf-xml
@@ -117,7 +114,6 @@ ralplast-nf-xml
 
 ```
 ralplast-xml-parser
-
 ralplast-xml-validator
 ```
 
@@ -132,9 +128,9 @@ ralplast-xml-validator
 
 ---
 
-# Sprint 3 — Persistência
+## Sprint 3 — Persistência
 
-## Repositório
+### Repositório
 
 ```
 ralplast-nf-notes
@@ -144,11 +140,8 @@ ralplast-nf-notes
 
 ```
 ralplast-invoice-create
-
 ralplast-invoice-product-create
-
 ralplast-invoice-tax-create
-
 ralplast-invoice-duplicate-check
 ```
 
@@ -162,9 +155,9 @@ Persistir:
 
 ---
 
-# Sprint 4 — Consulta
+## Sprint 4 — Consulta
 
-## Repositório
+### Repositório
 
 ```
 ralplast-nf-notes
@@ -174,19 +167,16 @@ ralplast-nf-notes
 
 ```
 ralplast-invoice-get
-
 ralplast-invoice-list
-
 ralplast-invoice-search
-
 ralplast-invoice-download-xml
 ```
 
 ---
 
-# Sprint 5 — Frontend
+## Sprint 5 — Frontend
 
-## Repositório
+### Repositório
 
 ```
 ralplast-nf-web
@@ -205,196 +195,80 @@ Construir toda a interface consumindo APIs já prontas.
 - Visualização da Nota
 - Download XML
 
-Ao iniciar o frontend, todas as APIs de upload, processamento e consulta já estarão disponíveis, permitindo desenvolver a interface sem criar APIs simultaneamente.
-
 ---
 
-# Sprint 6 — Dashboard
+## Fluxo de Desenvolvimento
 
-## Repositório
-
-```
-ralplast-nf-dashboard
-```
-
-### Lambdas
-
-```
-ralplast-dashboard-summary
-
-ralplast-dashboard-cards
-
-ralplast-dashboard-charts
-```
-
----
-
-# Sprint 7 — Financeiro
-
-## Repositório
-
-```
-ralplast-nf-financial
-```
-
-### Lambdas
-
-```
-ralplast-financial-profit
-
-ralplast-financial-revenue
-
-ralplast-financial-expenses
-
-ralplast-financial-summary
-```
-
----
-
-# Sprint 8 — Relatórios
-
-## Repositório
-
-```
-ralplast-nf-reports
-```
-
----
-
-# Sprint 9 — Empresas
-
-## Repositório
-
-```
-ralplast-nf-companies
-```
-
----
-
-# Sprint 10 — Usuários
-
-## Repositório
-
-```
-ralplast-nf-users
-```
-
----
-
-# Sprint 11 — Autenticação
-
-## Repositório
-
-```
-ralplast-nf-auth
-```
-
----
-
-# Sprint 12 — Auditoria
-
-## Repositório
-
-```
-ralplast-nf-audit
-```
-
----
-
-# Sprint 13 — Estoque
-
-## Repositório
-
-```
-ralplast-nf-stock
-```
-
----
-
-# Sprint 14 — Inteligência Artificial
-
-## Repositório
-
-```
-ralplast-nf-ai
-```
-
----
-
-# Fluxo de Desenvolvimento
-
-```
+```plaintext
 Infraestrutura
-
 ↓
-
 Upload XML
-
 ↓
-
 Parser da NF-e
-
 ↓
-
 Persistência
-
 ↓
-
 Consulta
-
 ↓
-
 Frontend
-
 ↓
-
 Dashboard
-
 ↓
-
 Financeiro
-
 ↓
-
 Relatórios
-
 ↓
-
 Empresas
-
 ↓
-
 Usuários
-
 ↓
-
 Autenticação
-
 ↓
-
 Auditoria
-
 ↓
-
 Estoque
-
 ↓
-
 Inteligência Artificial
 ```
 
 ---
 
-# Justificativa
+# Sistema de Gestão Inteligente de Notas Fiscais
 
-O frontend será iniciado somente após as APIs principais estarem concluídas.
+> **Documento Funcional**  
+> **Versão:** 1.0  
+> **Status:** Em Planejamento  
 
-Com isso será possível:
+---
 
-- Consumir APIs reais desde o primeiro dia.
-- Evitar retrabalho causado por mudanças de contrato.
-- Desenvolver a interface utilizando dados reais.
-- Validar o backend com Postman antes da criação das telas.
-- Reduzir a complexidade do desenvolvimento paralelo.
+## Sumário
 
-Essa abordagem acelera o desenvolvimento, melhora a qualidade das integrações e reduz o esforço de manutenção ao longo do projeto.
+1. Visão Geral
+2. Objetivos
+3. Arquitetura
+4. Fluxo do Sistema
+5. Funcionalidades
+6. Autenticação e Controle de Acesso
+7. Cálculo Automático de Lucro
+8. Estrutura do Banco de Dados
+9. Dashboard
+10. Casos de Uso
+11. Benefícios
+12. Expansões Futuras
+13. Tecnologias Sugeridas
+14. Roadmap do Projeto
+15. Conclusão
+
+---
+
+## 1. Visão Geral
+
+O Sistema de Gestão Inteligente de Notas Fiscais foi desenvolvido para automatizar o armazenamento, organização e análise de documentos fiscais eletrônicos (XML da NF-e).
+
+---
+
+## Justificativa
+
+A abordagem de desenvolvimento foi definida para acelerar o processo, garantir a qualidade e facilitar a integração entre os diferentes módulos do sistema.
+
+---
