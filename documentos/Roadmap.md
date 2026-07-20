@@ -1,9 +1,9 @@
 # Roadmap de Desenvolvimento
 ## Sistema de Gestão Inteligente de Notas Fiscais
 
-> Documento Técnico
-> Versão: 2.0
-> Status: Em andamento - Sprint 0 — Infraestrutura
+> Documento Técnico  
+> Versão: 2.0  
+> Status: Em andamento: Sprint 0 — Infraestrutura
 
 ---
 
