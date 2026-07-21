@@ -4,7 +4,7 @@
 
 > **Documento Técnico**  
 > **Versão:** 2.0  
-> **Status:** Em andamento: Sprint 0 — Infraestrutura
+> **Status:** Em andamento: Sprint 2
 
 ---
 
